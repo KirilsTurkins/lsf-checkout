@@ -61,9 +61,6 @@ jobs:
     permissions:
       contents: read
     env:
-      npm_config_userconfig: ${{ runner.temp }}/deepmerge-user.npmrc
-      npm_config_globalconfig: ${{ runner.temp }}/deepmerge-global.npmrc
-      npm_config_cache: ${{ runner.temp }}/deepmerge-npm-cache
       npm_config_registry: https://registry.npmjs.org/
       npm_config_update_notifier: 'false'
     steps:
@@ -76,6 +73,12 @@ jobs:
           package-manager-cache: false
       - name: Require existing exact tools and empty npm configuration
         run: |
+          export npm_config_userconfig="$RUNNER_TEMP/deepmerge-user.npmrc"
+          export npm_config_globalconfig="$RUNNER_TEMP/deepmerge-global.npmrc"
+          export npm_config_cache="$RUNNER_TEMP/deepmerge-npm-cache"
+          printf '%s\n' "npm_config_userconfig=$npm_config_userconfig" \
+            "npm_config_globalconfig=$npm_config_globalconfig" \
+            "npm_config_cache=$npm_config_cache" >> "$GITHUB_ENV"
           : > "$npm_config_userconfig"
           : > "$npm_config_globalconfig"
           test "$(node --version)" = 'v24.19.0'
